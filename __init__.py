@@ -1,27 +1,43 @@
 import os
-from flask import Flask
-from . import market
-from . import db
-from . import auth
+from flask import Flask, request, render_template, jsonify
+from sqlite3 import Connection as SQLite3Connection
+from datetime import datetime
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from flask_sqlalchemy import SQLAlchemy
 
-def create_app():
-    app = Flask(__name__)
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///market.file"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
 
-    app.config.from_mapping(
-	    SECRET_KEY="mikey",
-	    DATABASE_HOST=os.environ.get('FLASK_DATABASE_HOST'),
-	    DATABASE_USER=os.environ.get('FLASK_DATABASE_USER'),
-	    DATABASE_PASSWORD=os.environ.get('FLASK_DATABASE_PASSWORD'),
-	    DATABASE=os.environ.get('FLASK_DATABASE')
-	)
+#configura SQLite3 para forzar llaves foranea
+@event.listens_for(Engine, "connect")
+def _set_sqlite_pragma(dbapi_connection, connection_record):
+	if isinstance(dbapi_connection, SQLite3Connection):
+		cursor = dbapi_connection.cursor()
+		cursor.execute("PRAGMA foreign_keys=ON;")
+		cursor.close()
 
-    db.init_app(app)
+db = SQLAlchemy(app)
+now = datetime.now()
 
-    app.register_blueprint(market.bp)
-    app.register_blueprint(auth.bp)
 
-    return app
+class Item(db.Model):
+	id = db.Column(db.Integer(), primary_key=True)
+	name = db.Column(db.String(length=30), nullable=False, unique=True)
+	price = db.Column(db.Integer(), nullable=False)
+	barcode = db.Column(db.String(length=12), nullable=False, unique=True)
+	description = db.Column(db.String(length=1024), nullable=False, unique=True)
 
-#@app.route("/about/<username>")
-#def about_page(username):
-#    return f"<h1>This is the about page of {username}</h1>"
+	def __repr__(self):
+		return f"Item {self.name}"
+
+@app.route("/")
+@app.route("/home")
+def home_page():
+	return render_template("market/home.html")
+
+@app.route("/market")
+def market_page():
+	items = Item.query.all()
+	return render_template("market/market.html", items=items)
