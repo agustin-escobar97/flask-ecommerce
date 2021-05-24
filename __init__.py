@@ -10,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///market.file"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = 0
+app.config["SECRET_KEY"] = "123456"
 
 #configura SQLite3 para forzar llaves foranea
 @event.listens_for(Engine, "connect")

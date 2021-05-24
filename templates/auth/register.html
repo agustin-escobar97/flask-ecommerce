@@ -5,11 +5,31 @@ Register Page
 {% endblock %}
 
 {% block content %}
-<form method="POST">
-        <label for="username">Username</label>
-        <input name="username" id="username" required/>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required/>
-        <input type="submit" value="Registrarse">
-    </form>
+<body class="text-center">
+	<div class="container">
+	<form method="POST" class="form-register" style="color:white">
+		{{ form.hidden_tag() }}
+		<img class="mb-4" src="https://placekitten.com/408/287" alt="">
+		<h1 class="h3 mb-3 font-weight-normal">
+			Create account
+		</h1>
+		{{ form.username.label() }}
+		{{ form.username(class="form-control", placeholder="Username") }}
+
+		{{ form.email_address.label() }}
+		{{ form.email_address(class="form-control", placeholder="eMail Address") }}
+		
+
+		{{ form.password1.label() }}
+		{{ form.password1(class="form-control", placeholder="Password") }}
+
+		{{ form.password2.label() }}
+		{{ form.password2(class="form-control", placeholder="Confirm Password") }}
+
+		<br>
+
+		{{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+	</form>
+	</div>
+</body>
 {% endblock %}

@@ -27,18 +27,34 @@
           </ul>
 
           <ul class="navbar-nav">
-
-            
+            <li class="nav-item">
+              <a class="nav-link" href="#">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for("register_page") }}">Register</a>
           
           </ul>
 
         </div>
       </nav>
-      <!-- Future Content here -->
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+
+          {% endfor %}
+
+        {% endif %}
+      {% endwith %}
 
       {% block content %}
       
       {% endblock %}
+      <!-- Future Content here -->
+
+
       
       <!-- Optional JavaScript -->
       <!-- jQuery first, then Popper.js, then Bootstrap JS -->
