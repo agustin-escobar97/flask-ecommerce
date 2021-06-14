@@ -1,15 +1,35 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <h1>{% block title %}Login{% endblock %}</h1>
+    <h1>{% block title %}Login Page{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    <form method="POST">
-        <label for="username">Username</label>
-        <input name="username" id="username" required/>
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" required/>
-        <input type="submit" value="Iniciar Sesion">
-    </form>
+<body class="text-center">
+	<div class="container">
+	<form method="POST" class="form-signin" style="color:white">
+		{{ form.hidden_tag() }}
+		<img class="mb-4" src="https://placekitten.com/408/287" alt="">
+		<h1 class="h3 mb-3 font-weight-normal">
+			Inicie Sesión
+		</h1>
+		<br>
+
+		{{ form.username.label() }}
+		{{ form.username(class="form-control", placeholder="Usuario") }}
+
+		{{ form.password.label() }}
+		{{ form.password(class="form-control, type="password", placeholder="Contraseña") }}
+
+		<br>
+
+		<div>
+			<h6>No tienes cuenta?</h6>
+			<a class="btn btn-sm btn-secondary" href="{{ url_for("register_page") }}">Registrarse</a>
+		</div>
+		<br>
+		{{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+	</form>
+	</div>
+</body>
 {% endblock %}

@@ -3,7 +3,9 @@ from flask import render_template, redirect, url_for, flash, get_flashed_message
 
 from market.modelos import Item, User
 from market.forms import Register_Form
+from market.forms import Login_Form
 from market import db
+from flask_login import login_user
 
 @app.route("/")
 @app.route("/home")
@@ -19,7 +21,7 @@ def market_page():
 def register_page():
 	form = Register_Form()
 	if form.validate_on_submit():
-		user_to_create = User(username=form.username.data, email_address=form.email_address.data, password_hash=form.password1.data)
+		user_to_create = User(username=form.username.data, email_address=form.email_address.data, password=form.password1.data)
 
 		db.session.add(user_to_create)
 		db.session.commit()
@@ -27,6 +29,20 @@ def register_page():
 
 	if form.errors is not None:
 		for err_msg in form.errors.values():
-			flash (f"There was en error with user creation: {err_msg}", category="danger")
+			flash (f"Hubo un error con la creacion del usuario: {err_msg}", category="danger")
 
 	return render_template("auth/register.html", form=form)
+
+@app.route("/login", methods=["GET", "POST"])
+def login_page():
+	form = Login_Form()
+	if form.validate_on_submit():
+		attempted_user = User.query.filter_by(username=form.username.data).first()
+		if attempted_user and attempted_user.check_password_correction(attempted_password=form.password.data):
+			login_user(attempted_user)
+			flash(f"Inicio exitoso! {attempted_user.username}", category="success")
+			return redirect(url_for("market_page"))
+		else:
+			flash("Las credenciales son incorrectas", category="danger")
+
+	return render_template("auth/login.html", form=form)

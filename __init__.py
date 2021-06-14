@@ -1,10 +1,10 @@
-import os
-from flask import Flask, request, render_template, jsonify
+from flask import Flask
+from flask_bcrypt import Bcrypt
 from sqlite3 import Connection as SQLite3Connection
-from datetime import datetime
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 
 
 app = Flask(__name__)
@@ -21,7 +21,8 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
 		cursor.close()
 
 db = SQLAlchemy(app)
-now = datetime.now()
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 
 from . import modelos
 from . import rutas
